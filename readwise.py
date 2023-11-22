@@ -112,8 +112,10 @@ def main(write_path="", READ_FROM_FILE=False, WRITE_TO_FILE=True, read_path=""):
         new_data = read_from_file(read_path)
     else:
         day_delta = datetime.datetime.now() - datetime.datetime.strptime(DAY_LAST_FETCHED, '%Y-%m-%d')
+        print("Fetching data from the last " + str(day_delta.days) + " days...")
 
-        last_fetch_was_at = datetime.datetime.now() - datetime.timedelta(days=day_delta.days)  # use your own stored date
+        last_fetch_was_at = datetime.datetime.combine(datetime.datetime.now().date(), datetime.time())  # use your own stored date
+        print("Last fetch was at " + last_fetch_was_at.isoformat())
         new_data = fetch_from_export_api(last_fetch_was_at.isoformat())
 
     articles = create_articles(new_data)

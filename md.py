@@ -1,4 +1,10 @@
 from readwise import read_from_file, write_to_file
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+amazon_tag= os.environ.get("AMAZON_TAG")
+
 
 def convert_to_md(data):
     md = ""
@@ -7,9 +13,9 @@ def convert_to_md(data):
         for res in data['books']:
             md += f"## {res['readable_title']}\n"
             md += f"*{res['author']}*\n\n"
-            md += f"[(affiliate link)](https://www.amazon.com/dp/{res['asin']})\n\n"
+            md += f"[(affiliate link)](https://www.amazon.com/dp/{res['asin']}/?ref=nosim?tag={amazon_tag})\n\n"
             for highlight in res['highlights']:
-                md += "{note}\n\n"
+                md += f"{highlight['note']}\n\n" if highlight['note'] and len(highlight['note']) > 0 else "{note}\n\n"
                 md += f"> {highlight['text']}\n\n"
                 md += "---\n\n"
             md += "\n\n"
@@ -20,7 +26,7 @@ def convert_to_md(data):
             md += f"*{res['author']}*\n\n"
             md += f"[(source)]({res['source_url']})\n\n"
             for highlight in res['highlights']:
-                md += "{note}\n\n"
+                md += f"{highlight['note']}\n\n" if highlight['note'] and len(highlight['note']) > 0 else "{note}\n\n"
                 md += f"> {highlight['text']}\n\n"
                 md += "---\n\n"
             md += "\n\n"
