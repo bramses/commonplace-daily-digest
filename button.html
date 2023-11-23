@@ -1,0 +1,45 @@
+<button 
+  class="copyToClpboard" 
+  style="
+    background-color: transparent;
+    border: 2px solid #007BFF; /* your border color */
+    color: #007BFF; /* text color, same as border */
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+  "
+  onmouseover="mouseOver()"
+  onmouseout="mouseOut()"
+  onclick="copyTextToClipboard('Text to copy', 'Outline')"
+>
+  Outline
+</button>
+
+<script>
+  function mouseOver() {
+    document.getElementsByClassName('.copyToClpboard').style.backgroundColor = '#007BFF';
+    document.getElementsByClassName('.copyToClpboard').style.color = 'white';
+  }
+
+  function mouseOut() {
+    document.getElementsByClassName('.copyToClpboard').style.backgroundColor = 'transparent';
+    document.getElementsByClassName('.copyToClpboard').style.color = '#007BFF';
+  }
+
+  function copyTextToClipboard(text, originalText) {
+    navigator.clipboard.writeText(text).then(() => {
+      const button = document.getElementsByClassName('.copyToClpboard');
+      button.innerText = 'Copied to clipboard';
+      setTimeout(() => {
+        button.innerText = originalText;
+      }, 5000);
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+    });
+  }
+</script>

@@ -34,4 +34,24 @@ Book and Article Schema from Readwise:
 '''
 
 TODO:
-- [ ] add affil tag as env var
+- [ ] smart copy to clipboard
+
+```
+'''
+    generate html for each highlight that creates a button to copy the highlight to the clipboard
+
+    like:
+    ...text...
+
+    (COPY TO CLIPBOARD BTN)
+
+    (> copies the below text to the clipboard)
+    
+    {note}
+
+    > Biologists divide cells and organisms into the genotype (the genetic information) and the phenotype (the enzymes and other proteins, as well as the organs and morphology, that make up the body). With autocatalytic sets, there is no separation between genotype and phenotype. The system serves as its own genome. Nevertheless, the capacity to incorporate novel molecular species, and perhaps eliminate older molecular forms, promises to generate a population of self-reproducing chemical networks with different characteristics. Darwin tells us that such systems will evolve by natural selection.
+    -- At Home in the Universe: The Search for the Laws of Self-Organization and Complexity by Stuart A. Kauffman
+
+    from https://www.bramadams.dev/november-21-2023/ (var url = window.location.href;)
+    '''
+```

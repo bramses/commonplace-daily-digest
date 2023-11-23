@@ -10,8 +10,7 @@ READWISE_ACCESS_TOKEN = os.getenv("READWISE_ACCESS_TOKEN")
 
 three_days_ago = datetime.date.today() - datetime.timedelta(days=3)
 three_days_ago_str = three_days_ago.strftime('%Y-%m-%d')
-today_str = datetime.date.today().strftime('%Y-%m-%d')
-DAY_LAST_FETCHED = today_str
+
 
 def check_token():
     # set the headers
@@ -20,7 +19,8 @@ def check_token():
     }
 
     # make the GET request
-    response = requests.get("https://readwise.io/api/v2/auth/", headers=headers)
+    response = requests.get(
+        "https://readwise.io/api/v2/auth/", headers=headers)
 
     if response.status_code == 204:
         print("Token is valid")
@@ -59,6 +59,7 @@ def write_to_file(data, name='data.json', is_json=True):
         else:
             print(data, file=outfile)
 
+
 def read_from_file(name='data.json'):
     with open(name) as json_file:
         data = json.load(json_file)
@@ -67,6 +68,7 @@ def read_from_file(name='data.json'):
 
 def filter_highlights_by_category(highlights, category):
     return [highlight for highlight in highlights if highlight['category'] == category]
+
 
 def create_articles(data):
     articles = []
@@ -85,6 +87,7 @@ def create_articles(data):
                 })
             articles.append(article)
     return articles
+
 
 def create_books(data):
     books = []
@@ -106,15 +109,30 @@ def create_books(data):
             books.append(book)
     return books
 
+
 def main(write_path="", READ_FROM_FILE=False, WRITE_TO_FILE=True, read_path=""):
     new_data = []
     if READ_FROM_FILE:
         new_data = read_from_file(read_path)
     else:
-        day_delta = datetime.datetime.now() - datetime.datetime.strptime(DAY_LAST_FETCHED, '%Y-%m-%d')
-        print("Fetching data from the last " + str(day_delta.days) + " days...")
+        # today_str = datetime.date.today().strftime('%Y-%m-%d')
+        # DAY_LAST_FETCHED = today_str
+        # day_delta = datetime.datetime.now() - datetime.datetime.strptime(DAY_LAST_FETCHED, '%Y-%m-%d')
+        # print("Fetching data from the last " + str(day_delta.days) + " days...")
 
-        last_fetch_was_at = datetime.datetime.combine(datetime.datetime.now().date(), datetime.time())  # use your own stored date
+        # last_fetch_was_at = datetime.datetime.combine(datetime.datetime.now().date(), datetime.time())  # use your own stored date
+        # print("Last fetch was at " + last_fetch_was_at.isoformat())
+        # new_data = fetch_from_export_api(last_fetch_was_at.isoformat())
+
+        yesterday = datetime.date.today() - datetime.timedelta(days=1)
+        DAY_LAST_FETCHED = yesterday.strftime('%Y-%m-%d')
+        day_delta = datetime.datetime.now(
+        ) - datetime.datetime.strptime(DAY_LAST_FETCHED, '%Y-%m-%d')
+        print("Fetching data from the last " +
+              str(day_delta.days) + " days...")
+
+        last_fetch_was_at = datetime.datetime.combine(
+            yesterday, datetime.time(20, 1))  # yesterday at 8:01 PM
         print("Last fetch was at " + last_fetch_was_at.isoformat())
         new_data = fetch_from_export_api(last_fetch_was_at.isoformat())
 
@@ -129,6 +147,6 @@ def main(write_path="", READ_FROM_FILE=False, WRITE_TO_FILE=True, read_path=""):
     if WRITE_TO_FILE:
         write_to_file(joined_data, write_path, is_json=True)
 
+
 if __name__ == "__main__":
     main()
-
