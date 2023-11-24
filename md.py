@@ -67,6 +67,7 @@ display: inline-block;
 font-size: 16px;
 margin: 4px 2px;
 cursor: pointer;
+min-width: inherit;
 transition: all 0.3s ease 0s;"
  onmouseover="mouseOverCopyShareButton({idx})"
  onmouseout="mouseOutCopyShareButton({idx})"
