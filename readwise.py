@@ -8,9 +8,6 @@ load_dotenv()
 # Get the token from the .env file
 READWISE_ACCESS_TOKEN = os.getenv("READWISE_ACCESS_TOKEN")
 
-three_days_ago = datetime.date.today() - datetime.timedelta(days=3)
-three_days_ago_str = three_days_ago.strftime('%Y-%m-%d')
-
 
 def check_token():
     # set the headers
@@ -104,7 +101,8 @@ def create_books(data):
             for highlight in res['highlights']:
                 book['highlights'].append({
                     'text': highlight['text'],
-                    'note': highlight['note']
+                    'note': highlight['note'],
+                    'highlighted_at': highlight['highlighted_at']
                 })
             books.append(book)
     return books
@@ -115,6 +113,7 @@ def main(write_path="", READ_FROM_FILE=False, WRITE_TO_FILE=True, read_path=""):
     if READ_FROM_FILE:
         new_data = read_from_file(read_path)
     else:
+        # midnight today
         # today_str = datetime.date.today().strftime('%Y-%m-%d')
         # DAY_LAST_FETCHED = today_str
         # day_delta = datetime.datetime.now() - datetime.datetime.strptime(DAY_LAST_FETCHED, '%Y-%m-%d')
@@ -124,7 +123,9 @@ def main(write_path="", READ_FROM_FILE=False, WRITE_TO_FILE=True, read_path=""):
         # print("Last fetch was at " + last_fetch_was_at.isoformat())
         # new_data = fetch_from_export_api(last_fetch_was_at.isoformat())
 
+        # 801pm yesterday
         yesterday = datetime.date.today() - datetime.timedelta(days=1)
+
         DAY_LAST_FETCHED = yesterday.strftime('%Y-%m-%d')
         day_delta = datetime.datetime.now(
         ) - datetime.datetime.strptime(DAY_LAST_FETCHED, '%Y-%m-%d')
@@ -135,6 +136,17 @@ def main(write_path="", READ_FROM_FILE=False, WRITE_TO_FILE=True, read_path=""):
             yesterday, datetime.time(20, 1))  # yesterday at 8:01 PM
         print("Last fetch was at " + last_fetch_was_at.isoformat())
         new_data = fetch_from_export_api(last_fetch_was_at.isoformat())
+
+
+        # filter any highlights in data.res.highlights that are older than yesterday 801pm example date format (new_data.[res].[higlights]."highlighted_at": "2023-11-14T15:41:44.943Z")
+        for res in new_data:
+            res['highlights'] = [
+                highlight for highlight in res['highlights'] if highlight['highlighted_at'] > last_fetch_was_at.isoformat()]
+            # print the highlighted_at date for each highlight
+            # for highlight in res['highlights']:
+            #     print(highlight['highlighted_at'])
+            # print("Filtering highlights from " + res['title'] + "...")
+            # print("There are " + str(len(res['highlights'])) + " highlights")
 
     articles = create_articles(new_data)
     books = create_books(new_data)

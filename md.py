@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import markdown
 import html
+import datetime
 load_dotenv()
 
 amazon_tag= os.environ.get("AMAZON_TAG")
@@ -11,6 +12,7 @@ amazon_tag= os.environ.get("AMAZON_TAG")
 def convert_to_md(data):
     md = ""
     idx = 0
+    date_str = datetime.date.today().strftime("%Y%m%d")
     if data['books'] is not None and len(data['books']) > 0:
         md += "# Books\n\n"
         for res in data['books']:
@@ -18,7 +20,7 @@ def convert_to_md(data):
             md += f"*{res['author']}*\n\n"
             md += f"[(affiliate link)](https://www.amazon.com/dp/{res['asin']}/?ref=nosim?tag={amazon_tag})\n\n"
             for highlight in res['highlights']:
-                md += f'<div id="highlight-{idx}" styles="all: initial;">\n\n'
+                md += f'<div id="highlight-{idx}-{date_str}" styles="all: initial;">\n\n'
                 md += f"{highlight['note']}\n\n" if highlight['note'] and len(highlight['note']) > 0 else "{note}\n\n"
                 md += "<br />\n\n"
                 md += f"> {highlight['text']}\n\n"
@@ -34,7 +36,7 @@ def convert_to_md(data):
             md += f"*{res['author']}*\n\n"
             md += f"[(source)]({res['source_url']})\n\n"
             for highlight in res['highlights']:
-                md += f'<div id="highlight-{idx}" styles="all: initial;">\n\n'
+                md += f'<div id="highlight-{idx}-{date_str}" styles="all: initial;">\n\n'
                 md += f"{highlight['note']}\n\n" if highlight['note'] and len(highlight['note']) > 0 else "{note}\n\n"
                 md += "<br />\n\n"
                 md += f"> {highlight['text']}\n\n"
@@ -53,9 +55,10 @@ def md_to_html(md):
 def generate_copy_text_to_clipboard_button(idx, title, author, url):
     escape_title = html.escape(title)
     escape_author = html.escape(author)
+    date_str = datetime.date.today().strftime("%Y%m%d")
     # generate html button
     btn_str = f'''<button 
- id="copyToClipboard-{idx}" 
+ id="copyToClipboard-{idx}-{date_str}" 
  style="
 background-color: transparent;
 border: 2px solid var(--ghost-accent-color); /* your border color */
@@ -69,9 +72,9 @@ margin: 4px 2px;
 cursor: pointer;
 min-width: inherit;
 transition: all 0.3s ease 0s;"
- onmouseover="mouseOverCopyShareButton({idx})"
- onmouseout="mouseOutCopyShareButton({idx})"
- onclick="copyTextToClipboardCopyShareButton({idx}, '{escape_title}', '{escape_author}', '{url}', 'Copy to Clipboard')"
+ onmouseover="mouseOverCopyShareButton('{idx}-{date_str}')"
+ onmouseout="mouseOutCopyShareButton('{idx}-{date_str}')"
+ onclick="copyTextToClipboardCopyShareButton('{idx}-{date_str}', '{escape_title}', '{escape_author}', '{url}', 'Copy to Clipboard')"
 >Copy to Clipboard</button>
     '''
     # remove all newlines
